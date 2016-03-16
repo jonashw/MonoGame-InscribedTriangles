@@ -38,8 +38,11 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CircularArray.cs" />
+    <Compile Include="Easing.cs" />
+    <Compile Include="Entities\EquilateralTriangle.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="MeshFactory.cs" />
+    <Compile Include="Entities\GraphGrid.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
