@@ -11,6 +11,7 @@ namespace MonoGameRubiks
         private SpriteBatch _spriteBatch;
         private BasicEffect _basicEffect;
         private EquilateralTriangle _triangle;
+        private EquilateralTriangleAnimator _triangleAnimator;
         private GraphGrid _graphGrid;
         private SpriteFont _font;
 
@@ -43,8 +44,9 @@ namespace MonoGameRubiks
             //GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
 
             _font = Content.Load<SpriteFont>("Consolas");
-            _triangle = new EquilateralTriangle(1.5f, _font);
-            _graphGrid = new GraphGrid(GraphicsDevice, size:14);
+            _triangle = new EquilateralTriangle(2f);
+            _triangleAnimator = new EquilateralTriangleAnimator(_triangle, _font);
+            _graphGrid = new GraphGrid(GraphicsDevice, size:30);
         }
 
         protected override void Update(GameTime gameTime)
@@ -52,8 +54,7 @@ namespace MonoGameRubiks
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            //vertices[0].Position.X += 0.1f;
-            _triangle.Update(gameTime);
+            _triangleAnimator.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -78,6 +79,7 @@ namespace MonoGameRubiks
             }
 
             _triangle.Draw(_spriteBatch,GraphicsDevice);
+            _triangleAnimator.Draw(_spriteBatch);
 
             _spriteBatch.End();
 
