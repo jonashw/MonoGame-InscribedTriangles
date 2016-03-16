@@ -29,7 +29,7 @@ namespace MonoGameRubiks
 			new EasingFunction("QuintIn", Easing.QuintIn),
 			new EasingFunction("QuintOut", Easing.QuintOut),
 			new EasingFunction("QuintInOut", Easing.QuintInOut),
-			new EasingFunction("SinusoidalInn", Easing.SinusoidalIn),
+			new EasingFunction("SinusoidalIn", Easing.SinusoidalIn),
 			new EasingFunction("SinusoidalOut", Easing.SinusoidalOut),
 			new EasingFunction("SinusoidalInOut", Easing.SinusoidalInOut),
 			new EasingFunction("ExponentialIn", Easing.ExponentialIn),

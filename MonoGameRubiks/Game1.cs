@@ -11,9 +11,11 @@ namespace MonoGameRubiks
         private SpriteBatch _spriteBatch;
         private BasicEffect _basicEffect;
         private EquilateralTriangle _triangle;
-        private EquilateralTriangleAnimator _triangleAnimator;
+        private Animator _triangleAnimator;
         private GraphGrid _graphGrid;
         private SpriteFont _font;
+        private readonly KeyboardEvents _keyboard = new KeyboardEvents();
+        private readonly CircularArray<EasingFunction> _easingFn = new CircularArray<EasingFunction>(EasingFunction.All);
 
         public Game1()
         {
@@ -44,9 +46,37 @@ namespace MonoGameRubiks
             //GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
 
             _font = Content.Load<SpriteFont>("Consolas");
-            _triangle = new EquilateralTriangle(2f);
-            _triangleAnimator = new EquilateralTriangleAnimator(_triangle, _font);
+            _triangle = new EquilateralTriangle(0);
+            _triangleAnimator = new Animator(
+                _easingFn.GetCurrent().Apply,
+                _triangle.SideLength,
+                value => _triangle.SideLength = value,
+                2.5f,
+                1);
+
             _graphGrid = new GraphGrid(GraphicsDevice, size:30);
+
+            _keyboard.OnPress(Keys.Right, () =>
+            {
+                _easingFn.Next();
+                _triangleAnimator.Easing = _easingFn.GetCurrent().Apply;
+            });
+
+            _keyboard.OnPress(Keys.Left, () =>
+            {
+                _easingFn.Prev();
+                _triangleAnimator.Easing = _easingFn.GetCurrent().Apply;
+            });
+
+            _keyboard.OnPress(Keys.Up, () =>
+            {
+                _triangleAnimator.Duration += 0.5f;
+            });
+
+            _keyboard.OnPress(Keys.Down, () =>
+            {
+                _triangleAnimator.Duration -= 0.5f;
+            });
         }
 
         protected override void Update(GameTime gameTime)
@@ -54,7 +84,15 @@ namespace MonoGameRubiks
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            _keyboard.Update(Keyboard.GetState());
+
             _triangleAnimator.Update(gameTime);
+            if (!_triangleAnimator.Animating)
+            {
+                _triangleAnimator.StartingValue = _triangle.SideLength;
+                _triangleAnimator.ValueChange = -_triangleAnimator.ValueChange;
+                _triangleAnimator.Reset();
+            }
 
             base.Update(gameTime);
         }
@@ -70,6 +108,8 @@ namespace MonoGameRubiks
 
             _spriteBatch.Begin();
             _graphGrid.Draw(_spriteBatch, GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
+            _spriteBatch.DrawString(_font, "Easing Function: " + _easingFn.GetCurrent().Name, new Vector2(24,12), Color.DarkBlue);
+            _spriteBatch.DrawString(_font, "Animation Duration: " + _triangleAnimator.Duration, new Vector2(24,36), Color.DarkBlue);
 
             GraphicsDevice.RasterizerState = _state;
 
@@ -79,7 +119,6 @@ namespace MonoGameRubiks
             }
 
             _triangle.Draw(_spriteBatch,GraphicsDevice);
-            _triangleAnimator.Draw(_spriteBatch);
 
             _spriteBatch.End();
 

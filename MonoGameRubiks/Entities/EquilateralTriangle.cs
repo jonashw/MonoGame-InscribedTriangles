@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -7,42 +8,46 @@ namespace MonoGameRubiks.Entities
     public class EquilateralTriangle
     {
         private float _sideLength;
+        private float _height;
+        private VertexPositionColor[] _vertices;
+
+        public EquilateralTriangle(float sideLength)
+        {
+            _sideLength = sideLength;
+            updateHeight();
+            updateVertices();
+        }
+
         public float SideLength
         {
             get { return _sideLength; }
             set
             {
                 _sideLength = value;
+                updateHeight();
                 updateVertices();
             }
-        }
-        private VertexPositionColor[] _vertices;
-
-        public EquilateralTriangle(float sideLength)
-        {
-            _sideLength = sideLength;
-            _vertices = getVertices(sideLength);
         }
 
         public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphics)
         {
-            graphics.DrawUserPrimitives(PrimitiveType.TriangleList, _vertices, 0, 1, VertexPositionColor.VertexDeclaration);
+            graphics.DrawUserPrimitives(PrimitiveType.TriangleList, _vertices, 0, _vertices.Length/3, VertexPositionColor.VertexDeclaration);
+        }
+
+        private void updateHeight()
+        {
+            _height = _sideLength * (float)Math.Sqrt(3) / 2f;
         }
 
         private void updateVertices()
         {
-            _vertices = getVertices(_sideLength);
-        }
-
-        private static VertexPositionColor[] getVertices(float sideLength)
-        {
-            var h = sideLength * (float)Math.Sqrt(3) / 2f;
-            return new[]
+            var h = _height;
+            _vertices =  new[]
             {
-                new VertexPositionColor(new Vector3(sideLength/-2, -h/3, 0), Color.White),
-                new VertexPositionColor(new Vector3(sideLength/2, -h/3, 0), Color.White),
-                new VertexPositionColor(new Vector3(0.0f, (2f/3)*h, 0), Color.White)
-            };
+                new Vector3(0.0f, (2f/3)*h, 0),
+                new Vector3(-_sideLength/2, -h/3, 0),
+                new Vector3( _sideLength/2, -h/3, 0),
+            }.Select(p => new VertexPositionColor(p, Color.White)).ToArray();
         }
     }
 }
