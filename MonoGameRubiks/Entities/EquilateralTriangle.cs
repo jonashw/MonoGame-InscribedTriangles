@@ -5,18 +5,20 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MonoGameRubiks.Entities
 {
-    public class EquilateralTriangle
+    public class EquilateralTriangle : Triangle
     {
         private float _sideLength;
-        private float _height;
-        private VertexPositionColor[] _vertices;
+        public float Height { get; private set; }
+        public float CircumRadius { get; private set; }
 
-        public EquilateralTriangle(float sideLength)
+        public EquilateralTriangle(Texture2D pointTexture, float sideLength) : base(pointTexture)
         {
             _sideLength = sideLength;
+            updateCircumRadius();
             updateHeight();
             updateVertices();
         }
+
 
         public float SideLength
         {
@@ -24,30 +26,31 @@ namespace MonoGameRubiks.Entities
             set
             {
                 _sideLength = value;
+                updateCircumRadius();
                 updateHeight();
                 updateVertices();
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphics)
-        {
-            graphics.DrawUserPrimitives(PrimitiveType.TriangleList, _vertices, 0, _vertices.Length/3, VertexPositionColor.VertexDeclaration);
-        }
-
         private void updateHeight()
         {
-            _height = _sideLength * (float)Math.Sqrt(3) / 2f;
+            Height = _sideLength * (float)Math.Sqrt(3) / 2f;
+        }
+
+        private void updateCircumRadius()
+        {
+            CircumRadius = _sideLength/(float) Math.Sqrt(3);
         }
 
         private void updateVertices()
         {
-            var h = _height;
-            _vertices =  new[]
-            {
-                new Vector3(0.0f, (2f/3)*h, 0),
-                new Vector3(-_sideLength/2, -h/3, 0),
-                new Vector3( _sideLength/2, -h/3, 0),
-            }.Select(p => new VertexPositionColor(p, Color.White)).ToArray();
+            var h = Height;
+            var a = VertexA = new Vector3(0.0f, (2f/3)*h, 0);
+            var b = VertexB = new Vector3(-_sideLength/2, -h/3, 0);
+            var c = VertexC = new Vector3(_sideLength/2, -h/3, 0);
+            Vertices = new[] {a, b, c}
+                .Select(p => new VertexPositionColor(p, Color.White))
+                .ToArray();
         }
     }
 }

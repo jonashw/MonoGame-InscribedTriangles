@@ -11,8 +11,7 @@ namespace MonoGameRubiks
         public float ValueChange;
         private readonly Action<float> _setter;
         private double _currentAnimationTime;
-
-        public bool Animating { get; private set; }
+        public AnimatorState State { get; private set; }
 
         public Animator(Easing.EasingFn easing, float startingValue, Action<float> setter, float valueChange, double duration)
         {
@@ -21,11 +20,15 @@ namespace MonoGameRubiks
             StartingValue = startingValue;
             Duration = duration;
             _setter = setter;
-            Animating = true;
+            State = AnimatorState.Animating;
         }
 
         public void Update(GameTime gameTime)
         {
+            if (State != AnimatorState.Animating)
+            {
+                return;
+            }
             _currentAnimationTime = Math.Min(
                 _currentAnimationTime + gameTime.ElapsedGameTime.TotalSeconds,
                 Duration); // Prevent over-animating
@@ -40,18 +43,36 @@ namespace MonoGameRubiks
 
             if (_currentAnimationTime >= Duration)
             {
-                Animating = false;
+                State = AnimatorState.Finished;
             }
         }
 
         public void Reset()
         {
-            if (Animating)
+            if (State != AnimatorState.Finished)
             {
                 return;
             }
             _currentAnimationTime = 0;
-            Animating = true;
+            State = AnimatorState.Animating;
         }
+
+        public void PlayPause()
+        {
+            switch (State)
+            {
+                case AnimatorState.Animating:
+                    State = AnimatorState.Paused;
+                    return;
+                case AnimatorState.Paused:
+                    State = AnimatorState.Animating;
+                    return;
+            }
+        }
+    }
+
+    public enum AnimatorState
+    {
+        Animating, Paused, Finished
     }
 }

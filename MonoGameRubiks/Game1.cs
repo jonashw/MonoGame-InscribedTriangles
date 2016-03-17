@@ -11,9 +11,11 @@ namespace MonoGameRubiks
         private SpriteBatch _spriteBatch;
         private BasicEffect _basicEffect;
         private EquilateralTriangle _triangle;
+        private InscribedEquilateralTriangle _inscribedTriangle;
         private Animator _triangleAnimator;
         private GraphGrid _graphGrid;
         private SpriteFont _font;
+        private Texture2D _pointTexture;
         private readonly KeyboardEvents _keyboard = new KeyboardEvents();
         private readonly CircularArray<EasingFunction> _easingFn = new CircularArray<EasingFunction>(EasingFunction.All);
 
@@ -46,13 +48,17 @@ namespace MonoGameRubiks
             //GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
 
             _font = Content.Load<SpriteFont>("Consolas");
-            _triangle = new EquilateralTriangle(0);
+
+            _pointTexture = GeometricTextureFactory.Circle(GraphicsDevice, 5, Color.White);
+            _triangle = new EquilateralTriangle(_pointTexture, 1f);
+            _inscribedTriangle = new InscribedEquilateralTriangle(_pointTexture, _triangle);
+            _easingFn.Next(3);
             _triangleAnimator = new Animator(
                 _easingFn.GetCurrent().Apply,
                 _triangle.SideLength,
                 value => _triangle.SideLength = value,
-                2.5f,
-                1);
+                .125f,
+                0.5);
 
             _graphGrid = new GraphGrid(GraphicsDevice, size:30);
 
@@ -77,6 +83,8 @@ namespace MonoGameRubiks
             {
                 _triangleAnimator.Duration -= 0.5f;
             });
+
+            _keyboard.OnPress(Keys.Space, () => _triangleAnimator.PlayPause());
         }
 
         protected override void Update(GameTime gameTime)
@@ -87,7 +95,10 @@ namespace MonoGameRubiks
             _keyboard.Update(Keyboard.GetState());
 
             _triangleAnimator.Update(gameTime);
-            if (!_triangleAnimator.Animating)
+
+            _inscribedTriangle.Update();
+
+            if (_triangleAnimator.State == AnimatorState.Finished)
             {
                 _triangleAnimator.StartingValue = _triangle.SideLength;
                 _triangleAnimator.ValueChange = -_triangleAnimator.ValueChange;
@@ -99,7 +110,8 @@ namespace MonoGameRubiks
 
         private readonly RasterizerState _state = new RasterizerState
         {
-            FillMode = FillMode.WireFrame
+            FillMode = FillMode.WireFrame,
+            CullMode = CullMode.None
         };
 
         protected override void Draw(GameTime gameTime)
@@ -118,7 +130,8 @@ namespace MonoGameRubiks
                 pass.Apply();
             }
 
-            _triangle.Draw(_spriteBatch,GraphicsDevice);
+            _triangle.Draw(_spriteBatch,GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
+            _inscribedTriangle.Draw(_spriteBatch, GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
 
             _spriteBatch.End();
 

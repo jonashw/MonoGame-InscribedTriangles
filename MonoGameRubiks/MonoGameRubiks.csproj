@@ -42,8 +42,11 @@
     <Compile Include="Easing.cs" />
     <Compile Include="Entities\EquilateralTriangle.cs" />
     <Compile Include="Animator.cs" />
+    <Compile Include="Entities\InscribedEquilateralTriangle.cs" />
+    <Compile Include="Entities\Triangle.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Entities\GraphGrid.cs" />
+    <Compile Include="GeometricTextureFactory.cs" />
     <Compile Include="KeyboardEvents.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

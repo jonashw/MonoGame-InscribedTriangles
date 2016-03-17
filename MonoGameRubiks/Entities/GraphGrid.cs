@@ -52,8 +52,13 @@ namespace MonoGameRubiks.Entities
             drawSpriteAt(_originTexture, _origin3, spriteBatch, graphics, projectionMatrix, viewMatrix);
         }
 
-        private static void drawSpriteAt(Texture2D texture, Vector3 position, SpriteBatch spriteBatch, GraphicsDevice graphics,
-            Matrix projectionMatrix, Matrix viewMatrix)
+        private static void drawSpriteAt(
+            Texture2D texture,
+            Vector3 position,
+            SpriteBatch spriteBatch,
+            GraphicsDevice graphics,
+            Matrix projectionMatrix,
+            Matrix viewMatrix)
         {
             var screenLocation = graphics.Viewport.Project(
                 position,

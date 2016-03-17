@@ -15,12 +15,12 @@
             return _items[_index];
         }
 
-        public void Next()
+        public void Next(int n = 1)
         {
-            _index++;
+            _index += n;
             if (_index >= _items.Length)
             {
-                _index = 0;
+                _index -= _items.Length;
             }
         }
 
