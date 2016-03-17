@@ -11,7 +11,8 @@ namespace MonoGameRubiks
         private SpriteBatch _spriteBatch;
         private BasicEffect _basicEffect;
         private EquilateralTriangle _triangle;
-        private InscribedEquilateralTriangle _inscribedTriangle;
+        private InscribedEquilateralTriangle _inscribedTriangleA;
+        private InscribedEquilateralTriangle _inscribedTriangleB;
         private Animator _triangleAnimator;
         private GraphGrid _graphGrid;
         private SpriteFont _font;
@@ -51,7 +52,8 @@ namespace MonoGameRubiks
 
             _pointTexture = GeometricTextureFactory.Circle(GraphicsDevice, 5, Color.White);
             _triangle = new EquilateralTriangle(_pointTexture, 1f);
-            _inscribedTriangle = new InscribedEquilateralTriangle(_pointTexture, _triangle);
+            _inscribedTriangleA = new InscribedEquilateralTriangle(_pointTexture, _triangle);
+            _inscribedTriangleB = new InscribedEquilateralTriangle(_pointTexture, _inscribedTriangleA);
             _easingFn.Next(3);
             _triangleAnimator = new Animator(
                 _easingFn.GetCurrent().Apply,
@@ -96,7 +98,8 @@ namespace MonoGameRubiks
 
             _triangleAnimator.Update(gameTime);
 
-            _inscribedTriangle.Update();
+            _inscribedTriangleA.Update();
+            _inscribedTriangleB.Update();
 
             if (_triangleAnimator.State == AnimatorState.Finished)
             {
@@ -131,7 +134,8 @@ namespace MonoGameRubiks
             }
 
             _triangle.Draw(_spriteBatch,GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
-            _inscribedTriangle.Draw(_spriteBatch, GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
+            _inscribedTriangleA.Draw(_spriteBatch, GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
+            //_inscribedTriangleB.Draw(_spriteBatch, GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
 
             _spriteBatch.End();
 

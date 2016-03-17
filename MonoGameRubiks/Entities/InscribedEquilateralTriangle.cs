@@ -7,10 +7,10 @@ namespace MonoGameRubiks.Entities
 {
     public class InscribedEquilateralTriangle : Triangle
     {
-        public readonly EquilateralTriangle ParentTriangle;
+        public readonly Triangle ParentTriangle;
         private float _theta;
 
-        public InscribedEquilateralTriangle(Texture2D pointTexture, EquilateralTriangle parentTriangle) : base(pointTexture)
+        public InscribedEquilateralTriangle(Texture2D pointTexture, Triangle parentTriangle) : base(pointTexture)
         {
             ParentTriangle = parentTriangle;
             _theta = 0;
@@ -51,49 +51,35 @@ namespace MonoGameRubiks.Entities
         {
             var theta = (_theta + thetaOffset) % MathHelper.TwoPi;
 
-            if (0 < theta && theta < Top)
-            {
-                var tan = (float)Math.Tan(theta);
-                var x = ParentTriangle.VertexA.Y/(tan - ParentTriangle.SlopeCA);
-                var y = x*tan;
-                return new Vector3(x, y, 0);
-            }
             if (Math.Abs(theta - Top) < 0.01)
             {
                 return ParentTriangle.VertexA;
             }
-            if (Top < theta && theta < BottomLeft)
+            if (Math.Abs(theta - BottomCenter) < 0.01)
             {
-                var alpha = theta - MathHelper.PiOver2;
-                var tan = (float)Math.Tan(alpha);
-                var x = -ParentTriangle.VertexA.Y/((1/tan) + ParentTriangle.SlopeAB);
-                var y = -x/tan;
-                return new Vector3(x, y, 0);
+                return new Vector3(0, ParentTriangle.VertexC.Y, 0);
             }
-            if (BottomLeft < theta && theta < BottomCenter)
+            float slope, intercept;
+            if (Top < theta && theta <= BottomLeft)
             {
-                theta = BottomCenter - theta;
-                var tan = (float)Math.Tan(theta);
-                var y = ParentTriangle.VertexC.Y;
-                var x = y*tan;
-                return new Vector3(x, y, 0);
+                slope = ParentTriangle.SlopeAB;
+                intercept = ParentTriangle.VertexA.Y;
             }
-            if (BottomCenter < theta && theta < BottomRight)
+            else if (BottomLeft < theta && theta <= BottomRight)
             {
-                var phi = theta - MathHelper.Pi;
-                var y = ParentTriangle.VertexB.Y;
-                var x = ParentTriangle.VertexB.Y/(float) Math.Tan(phi);
-                return new Vector3(x, y, 0);
+                slope = ParentTriangle.SlopeBC;
+                intercept = ParentTriangle.VertexB.Y;
             }
-            if (BottomRight < theta && theta < MathHelper.TwoPi)
+            else
             {
-                var phi = MathHelper.TwoPi - theta;
-                var tan = (float)Math.Tan(phi);
-                var x = -ParentTriangle.VertexA.Y / (tan + ParentTriangle.SlopeCA);
-                var y = -x*tan;
-                return new Vector3(x, y, 0);
+                slope = ParentTriangle.SlopeCA;
+                intercept = ParentTriangle.VertexA.Y;
             }
-            return new Vector3();
+
+            var tan = (float)Math.Tan(theta);
+            var x = intercept/(tan - slope);
+            var y = x*tan;
+            return new Vector3(x, y, 0);
         }
     }
 }
