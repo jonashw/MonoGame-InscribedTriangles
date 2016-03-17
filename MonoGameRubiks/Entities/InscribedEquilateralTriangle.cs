@@ -19,9 +19,14 @@ namespace MonoGameRubiks.Entities
             updateVertices();
         }
 
+        public float Theta
+        {
+            get { return _theta; }
+        }
+
         public void Update()
         {
-            _theta -= 0.01f;
+            _theta += 0.01f;
             updateVertices();
             if (_theta > MathHelper.TwoPi)
             {
@@ -89,21 +94,24 @@ namespace MonoGameRubiks.Entities
         private const float BottomRight = MathHelper.TwoPi - MathHelper.Pi/6;
         private const float BottomCenter = 3 * MathHelper.Pi/2;
 
+        private const float Tolerance = 0.001f;
         private void setVertexPosition(float thetaOffset)
         {
             var theta = (_theta + thetaOffset) % MathHelper.TwoPi;
 
-            if (Math.Abs(theta - Top) < 0.01)
+            if (Math.Abs(theta - Top) < Tolerance)
             {
                 VertexA = ParentTriangle.VertexA;
             }
-            else if (Math.Abs(theta - BottomCenter) < 0.01)
+            else if (Math.Abs(theta - BottomCenter) < Tolerance)
             {
                 VertexB = new Vector3(0, ParentTriangle.VertexC.Y, 0);
-            } else if (Top < theta && theta <= BottomLeft)
+            } 
+            else if (Top < theta && theta < BottomLeft)
             {
                 VertexA = getVertex(theta, ParentTriangle.SlopeAB, ParentTriangle.VertexA.Y);
-            } else if (BottomLeft < theta && theta <= BottomRight)
+            }
+            else if (BottomLeft < theta && theta < BottomRight)
             {
                 VertexB = getVertex(theta, ParentTriangle.SlopeBC, ParentTriangle.VertexB.Y);
             }

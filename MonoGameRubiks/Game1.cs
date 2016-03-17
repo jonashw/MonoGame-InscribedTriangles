@@ -184,6 +184,7 @@ namespace MonoGameRubiks
             }
             _spriteBatch.DrawString(_font, "Easing Function: " + _easingFn.GetCurrent().Name, new Vector2(24,12), Color.DarkBlue);
             _spriteBatch.DrawString(_font, "Animation Duration: " + _triangleAnimator.Duration, new Vector2(24,36), Color.DarkBlue);
+            _spriteBatch.DrawString(_font, "Inscribed Triangle, Theta: " + _inscribedTriangle.Theta, new Vector2(24,60), Color.DarkBlue);
             foreach (var pair in new[]
             {
                 _inscribedTriangle.VertexA,
@@ -192,8 +193,8 @@ namespace MonoGameRubiks
             }.Zip(Enumerable.Range(0,10), (v, i) => new {v,i}))
             {
                 _spriteBatch.DrawString(_font,
-                    string.Format("Inscribed Triangle, Vertex [{0},{1}]: ", pair.v.X, pair.v.Y),
-                    new Vector2(24, 60 + 24*pair.i),
+                    string.Format("Inscribed Triangle, Vertex [{0},{1}]", pair.v.X, pair.v.Y),
+                    new Vector2(24, 84 + 24*pair.i),
                     Color.DarkBlue);
             }
 
