@@ -8,6 +8,7 @@ namespace MonoGameRubiks.Entities
     {
         private readonly Texture2D _pointTexture;
         protected VertexPositionColor[] Vertices;
+        public bool DrawVertices = true;
 
         public Vector3 VertexA { get; protected set; }
         public Vector3 VertexB { get; protected set; }
@@ -34,7 +35,11 @@ namespace MonoGameRubiks.Entities
 
         public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphics, Matrix projectionMatrix, Matrix viewMatrix)
         {
-            graphics.DrawUserPrimitives(PrimitiveType.TriangleList, Vertices, 0, 1, VertexPositionColor.VertexDeclaration);
+            graphics.DrawUserPrimitives(PrimitiveType.TriangleList, Vertices, 0, Vertices.Length/3, VertexPositionColor.VertexDeclaration);
+            if (!DrawVertices)
+            {
+                return;
+            }
 
             foreach (
                 var screenLocation in 

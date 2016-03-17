@@ -39,7 +39,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CircularArray.cs" />
+    <Compile Include="Colors\SceneColorAnimator.cs" />
+    <Compile Include="Colors\SceneColorSet.cs" />
+    <Compile Include="Colors\SceneColorSetPair.cs" />
+    <Compile Include="Colors\SceneColorType.cs" />
     <Compile Include="Easing.cs" />
+    <Compile Include="EasyTimer.cs" />
     <Compile Include="Entities\EquilateralTriangle.cs" />
     <Compile Include="Animator.cs" />
     <Compile Include="Entities\InscribedEquilateralTriangle.cs" />
@@ -50,6 +55,7 @@
     <Compile Include="KeyboardEvents.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Colors\SceneColors.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

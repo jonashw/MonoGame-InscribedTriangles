@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGameRubiks.Colors;
 
 namespace MonoGameRubiks.Entities
 {
@@ -18,7 +19,6 @@ namespace MonoGameRubiks.Entities
             updateHeight();
             updateVertices();
         }
-
 
         public float SideLength
         {
@@ -49,7 +49,7 @@ namespace MonoGameRubiks.Entities
             var b = VertexB = new Vector3(-_sideLength/2, -h/3, 0);
             var c = VertexC = new Vector3(_sideLength/2, -h/3, 0);
             Vertices = new[] {a, b, c}
-                .Select(p => new VertexPositionColor(p, Color.White))
+                .Select(p => new VertexPositionColor(p, SceneColors.OuterTriangle))
                 .ToArray();
         }
     }

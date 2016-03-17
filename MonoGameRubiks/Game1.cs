@@ -1,6 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGameRubiks.Colors;
 using MonoGameRubiks.Entities;
 
 namespace MonoGameRubiks
@@ -11,8 +15,7 @@ namespace MonoGameRubiks
         private SpriteBatch _spriteBatch;
         private BasicEffect _basicEffect;
         private EquilateralTriangle _triangle;
-        private InscribedEquilateralTriangle _inscribedTriangleA;
-        private InscribedEquilateralTriangle _inscribedTriangleB;
+        private InscribedEquilateralTriangle _inscribedTriangle;
         private Animator _triangleAnimator;
         private GraphGrid _graphGrid;
         private SpriteFont _font;
@@ -30,6 +33,7 @@ namespace MonoGameRubiks
             Content.RootDirectory = "Content";
         }
 
+        private bool _updating = true;
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -50,10 +54,11 @@ namespace MonoGameRubiks
 
             _font = Content.Load<SpriteFont>("Consolas");
 
-            _pointTexture = GeometricTextureFactory.Circle(GraphicsDevice, 5, Color.White);
-            _triangle = new EquilateralTriangle(_pointTexture, 1f);
-            _inscribedTriangleA = new InscribedEquilateralTriangle(_pointTexture, _triangle);
-            _inscribedTriangleB = new InscribedEquilateralTriangle(_pointTexture, _inscribedTriangleA);
+            _pointTexture = GeometricTextureFactory.Circle(GraphicsDevice, 5, SceneColors.Point);
+            _triangle = new EquilateralTriangle(_pointTexture, 2f);
+            _inscribedTriangle = new InscribedEquilateralTriangle(
+                _pointTexture,
+                _triangle);
             _easingFn.Next(3);
             _triangleAnimator = new Animator(
                 _easingFn.GetCurrent().Apply,
@@ -76,17 +81,24 @@ namespace MonoGameRubiks
                 _triangleAnimator.Easing = _easingFn.GetCurrent().Apply;
             });
 
+            _keyboard.OnPress(Keys.W, toggleWireframeDisplay);
+
             _keyboard.OnPress(Keys.Up, () =>
             {
                 _triangleAnimator.Duration += 0.5f;
             });
+
+            _keyboard.OnPress(Keys.J, () => _inscribedTriangle.StepTheta(0.01f));
+            _keyboard.OnPress(Keys.K, () => _inscribedTriangle.StepTheta(-.01f));
 
             _keyboard.OnPress(Keys.Down, () =>
             {
                 _triangleAnimator.Duration -= 0.5f;
             });
 
-            _keyboard.OnPress(Keys.Space, () => _triangleAnimator.PlayPause());
+            _keyboard.OnPress(Keys.Space, () => _updating = !_updating);
+
+            toSolidDisplay();
         }
 
         protected override void Update(GameTime gameTime)
@@ -96,37 +108,96 @@ namespace MonoGameRubiks
 
             _keyboard.Update(Keyboard.GetState());
 
-            _triangleAnimator.Update(gameTime);
-
-            _inscribedTriangleA.Update();
-            _inscribedTriangleB.Update();
-
-            if (_triangleAnimator.State == AnimatorState.Finished)
+            if (_updating)
             {
-                _triangleAnimator.StartingValue = _triangle.SideLength;
-                _triangleAnimator.ValueChange = -_triangleAnimator.ValueChange;
-                _triangleAnimator.Reset();
+                _triangleAnimator.Update(gameTime);
+
+                _inscribedTriangle.Update();
+
+                if (_triangleAnimator.State == AnimatorState.Finished)
+                {
+                    _triangleAnimator.StartingValue = _triangle.SideLength;
+                    _triangleAnimator.ValueChange = -_triangleAnimator.ValueChange;
+                    _triangleAnimator.Reset();
+                }
+
+                SceneColors.Update(gameTime);
             }
 
             base.Update(gameTime);
         }
 
-        private readonly RasterizerState _state = new RasterizerState
+        private static readonly RasterizerState WireFrameRasterizerState = new RasterizerState
         {
             FillMode = FillMode.WireFrame,
-            CullMode = CullMode.None
+            CullMode = CullMode.None,
+            MultiSampleAntiAlias = true
         };
+
+        private static readonly RasterizerState SolidFrameRasterizerState = new RasterizerState
+        {
+            FillMode = FillMode.Solid,
+            CullMode = CullMode.None,
+            MultiSampleAntiAlias = true
+        };
+
+        private void toggleWireframeDisplay()
+        {
+            if (_rasterizerState == WireFrameRasterizerState)
+            {
+                toSolidDisplay();
+            }
+            else
+            {
+                toWireFrameDisplay();
+            }
+        }
+
+        private void toSolidDisplay()
+        {
+            _rasterizerState = SolidFrameRasterizerState;
+            _inscribedTriangle.DrawVertices = false;
+            _triangle.DrawVertices = false;
+            _drawGrid = false;
+        }
+
+        private void toWireFrameDisplay()
+        {
+            _rasterizerState = WireFrameRasterizerState;
+            _inscribedTriangle.DrawVertices = true;
+            _triangle.DrawVertices = true;
+            _drawGrid = true;
+        }
+
+        private RasterizerState _rasterizerState = SolidFrameRasterizerState;
+        private bool _drawGrid = true;
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            _graphics.PreferMultiSampling = true;
+            GraphicsDevice.Clear(SceneColors.Background);
 
             _spriteBatch.Begin();
-            _graphGrid.Draw(_spriteBatch, GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
+            if (_drawGrid)
+            {
+                _graphGrid.Draw(_spriteBatch, GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
+            }
             _spriteBatch.DrawString(_font, "Easing Function: " + _easingFn.GetCurrent().Name, new Vector2(24,12), Color.DarkBlue);
             _spriteBatch.DrawString(_font, "Animation Duration: " + _triangleAnimator.Duration, new Vector2(24,36), Color.DarkBlue);
+            foreach (var pair in new[]
+            {
+                _inscribedTriangle.VertexA,
+                _inscribedTriangle.VertexB,
+                _inscribedTriangle.VertexC
+            }.Zip(Enumerable.Range(0,10), (v, i) => new {v,i}))
+            {
+                _spriteBatch.DrawString(_font,
+                    string.Format("Inscribed Triangle, Vertex [{0},{1}]: ", pair.v.X, pair.v.Y),
+                    new Vector2(24, 60 + 24*pair.i),
+                    Color.DarkBlue);
+            }
 
-            GraphicsDevice.RasterizerState = _state;
+            GraphicsDevice.RasterizerState = _rasterizerState;
 
             foreach (var pass in _basicEffect.CurrentTechnique.Passes)
             {
@@ -134,8 +205,7 @@ namespace MonoGameRubiks
             }
 
             _triangle.Draw(_spriteBatch,GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
-            _inscribedTriangleA.Draw(_spriteBatch, GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
-            //_inscribedTriangleB.Draw(_spriteBatch, GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
+            _inscribedTriangle.Draw(_spriteBatch, GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
 
             _spriteBatch.End();
 
