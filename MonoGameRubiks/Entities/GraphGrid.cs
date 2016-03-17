@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MonoGameRubiks.Entities
+namespace MonoGameInscribedTriangles.Entities
 {
     public class GraphGrid
     {

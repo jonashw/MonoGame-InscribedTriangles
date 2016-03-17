@@ -8,8 +8,8 @@
     <ProjectGuid>{3EE87D0D-5181-441B-92BA-DD0820601B18}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MonoGameRubiks</RootNamespace>
-    <AssemblyName>MonoGameRubiks</AssemblyName>
+    <RootNamespace>MonoGameInscribedTriangles</RootNamespace>
+    <AssemblyName>MonoGameInscribedTriangles</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
     <MonoGameContentBuilderExe>

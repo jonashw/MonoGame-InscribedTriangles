@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MonoGameRubiks
+namespace MonoGameInscribedTriangles
 {
     public class EasingFunction
     {

@@ -1,4 +1,4 @@
-﻿namespace MonoGameRubiks
+﻿namespace MonoGameInscribedTriangles
 {
     public class CircularArray<T>
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
-namespace MonoGameRubiks
+namespace MonoGameInscribedTriangles
 {
     public class KeyboardEvents
     {

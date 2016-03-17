@@ -1,4 +1,4 @@
-﻿namespace MonoGameRubiks.Colors
+﻿namespace MonoGameInscribedTriangles.Colors
 {
     public class SceneColorSetPair
     {

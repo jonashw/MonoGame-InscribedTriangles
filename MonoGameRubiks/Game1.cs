@@ -1,13 +1,10 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGameRubiks.Colors;
-using MonoGameRubiks.Entities;
+using MonoGameInscribedTriangles.Colors;
+using MonoGameInscribedTriangles.Entities;
 
-namespace MonoGameRubiks
+namespace MonoGameInscribedTriangles
 {
     public class Game1 : Game
     {
@@ -110,7 +107,7 @@ namespace MonoGameRubiks
 
             if (_updating)
             {
-                _triangleAnimator.Update(gameTime);
+                //_triangleAnimator.Update(gameTime);
 
                 _inscribedTriangle.Update();
 
@@ -182,6 +179,7 @@ namespace MonoGameRubiks
             {
                 _graphGrid.Draw(_spriteBatch, GraphicsDevice, _basicEffect.Projection, _basicEffect.View);
             }
+            /*
             _spriteBatch.DrawString(_font, "Easing Function: " + _easingFn.GetCurrent().Name, new Vector2(24,12), Color.DarkBlue);
             _spriteBatch.DrawString(_font, "Animation Duration: " + _triangleAnimator.Duration, new Vector2(24,36), Color.DarkBlue);
             _spriteBatch.DrawString(_font, "Inscribed Triangle, Theta: " + _inscribedTriangle.Theta, new Vector2(24,60), Color.DarkBlue);
@@ -197,6 +195,7 @@ namespace MonoGameRubiks
                     new Vector2(24, 84 + 24*pair.i),
                     Color.DarkBlue);
             }
+            */
 
             GraphicsDevice.RasterizerState = _rasterizerState;
 

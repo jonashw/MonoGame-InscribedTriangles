@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace MonoGameRubiks.Colors
+namespace MonoGameInscribedTriangles.Colors
 {
     public static class SceneColors
     {
@@ -36,8 +36,7 @@ namespace MonoGameRubiks.Colors
 
         private static readonly CircularArray<SceneColorSetPair> TransitionPairs = new CircularArray<SceneColorSetPair>(
             new SceneColorSetPair(SetA, SetB),
-            new SceneColorSetPair(SetB, SetC),
-            new SceneColorSetPair(SetC, SetA));
+            new SceneColorSetPair(SetB, SetA));
 
         private readonly static SceneColorAnimator Animator =
             new SceneColorAnimator(

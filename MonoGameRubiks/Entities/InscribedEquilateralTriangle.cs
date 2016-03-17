@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGameRubiks.Colors;
+using MonoGameInscribedTriangles.Colors;
 
-namespace MonoGameRubiks.Entities
+namespace MonoGameInscribedTriangles.Entities
 {
     public class InscribedEquilateralTriangle : Triangle
     {

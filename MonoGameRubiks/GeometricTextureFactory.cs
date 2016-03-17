@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MonoGameRubiks
+namespace MonoGameInscribedTriangles
 {
     public static class GeometricTextureFactory
     {
